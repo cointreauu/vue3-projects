@@ -1,19 +1,29 @@
 <template>
-  <div :class="color">
-    <!-- v-bind: 와 : 는 동일-->
-    {{ name }}    <!-- {{ object }} 형식으로 사용 -->
+  <div class="container">
+    <h2>To-do List</h2>
+    <form
+      class="d-flex"
+      @submit.prevent="onSubmit"
+    >
+      <div class="flex-grow-1 mr-2">
+        <input
+          v-model="todo"
+          class="form-control"
+          type="text"
+          placeholder="Type new to-do"
+        >
+      </div>
+      <div>
+        <button 
+          class="btn btn-primary"
+          type="submit"
+        >
+          Add
+        </button>
+      </div>
+    </form>
+    {{ todoList }}
   </div>
-  <input
-    :type="typeName"
-    :value="name"
-  >     <!-- name 과 bidning -->
-  <button 
-    class="btn btn-primary"
-    @click="updateName"
-  >
-    <!-- v-on: 과 @ 는 동일 -->
-    Click
-  </button>
 </template>
 
 <script>
@@ -21,22 +31,21 @@ import {ref} from 'vue';    // import
 
 export default{
   setup(){
-    const name = ref('cointreau');    // ref로 감싸줌
-    const typeName = ref('number');
-    const color = ref('red');
+    const todo = ref('');
+    const todoList = ref([]);
 
-    const updateName = () => {
-      name.value = 'coder';    // .value 를 사용해서 변경
-      typeName.value = 'text';
-      color.value = 'blue';
+    const onSubmit = () => {
+      //e.preventDefault();   // 자동 refresh 방지
+      todoList.value.push({
+        id: Date.now(),
+        subject: todo.value
+      });
     };
 
-    // object return, template 안에서 접근 가능해짐
     return {
-      name,
-      updateName,
-      typeName,
-      color
+      todo,
+      todoList,
+      onSubmit
     }
   }
 }
