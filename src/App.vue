@@ -30,13 +30,34 @@
         This field cannot be empty.
       </div>
     </form>
+    <div v-if="(todoList.length==0)">
+      추가된 Todo 가 없습니다.
+    </div>
     <div 
-      v-for="item in todoList"
+      v-for="(item, idx) in todoList"
       :key="item.id"
       class="card mt-2"
     >
-      <div class="card-body p-2">
-        {{ item.subject }}
+      <div class="card-body p-2 d-flex align-items-center">
+        <div class="form-check flex-grow-1">
+          <input 
+            v-model="item.completed" 
+            class="form-check-input"
+            type="checkbox"
+          >
+          <label 
+            class="form-check-label"
+            :class="{ todo: item.completed }"
+          >{{ item.subject }}</label>
+        </div>
+        <div>
+          <button
+            class="btn btn-danger btn-sm"
+            @click="deleteTodo(idx)"
+          >
+            Delete
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -44,15 +65,15 @@
 
 <script>
 import {ref} from 'vue';
-
 export default{
   setup(){
     const hasError = ref(false);
     const todo = ref('');
-    const todoList = ref([
-      {id: 1, subject: '휴대폰 사기'},
-      {id: 2, subject: '장보기'},
-    ]);
+    const todoList = ref([]);
+    const todoStyle = {
+      textDecoration: 'line-through',
+      color: 'grey'
+    };
 
     const onSubmit = () => {
       if (todo.value === ''){
@@ -60,11 +81,17 @@ export default{
       } else {
         todoList.value.push({
         id: Date.now(),
-        subject: todo.value
+        subject: todo.value,
+        completed: false,
       });
         hasError.value=false;
         todo.value = '';
       }      
+    };
+
+    const deleteTodo = (i) => {
+      todoList.value.splice(i, 1);
+      console.log(todoList.value);
     };
 
     return {
@@ -72,16 +99,16 @@ export default{
       todoList,
       onSubmit,
       hasError,
+      todoStyle,
+      deleteTodo
     };
   }
 }
 </script>
 
 <style>
-  .red{
-    color:red;
-  }
-  .blue{
-    color:blue;
+  .todo {
+    color: grey;
+    text-decoration: line-through;
   }
 </style>
